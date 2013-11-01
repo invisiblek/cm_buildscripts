@@ -1,0 +1,11 @@
+50004  # device/dlx  - dlx: fix svdo
+50245  # kern/d2     - d2: Raise ION_MM_SIZE
+51098  # ext/wpa_sup - wpa_supplicant: add a loop timeout to wait for driver
+52181  # fw/opt/tele - HTCQualcommRIL inherit QualcommMSIM42RIL
+52194  # fw/b        - Quiet Hours: allow disabling of system sounds (1 of 2)
+52195  # pk/app/sett - Quiet Hours: allow disabling of system sounds (2 of 2)
+52229  # fw/b        - QuietHours: clean up and consolidate code
+52488  # kern/d2     - msm: mdm2: Decrease leakage before QSC power-up
+52489  # kern/d2     - msm: 8960: set mdm pwr and reset gpios to pull down
+52730  # kern/d2     - msm: mdm_common: mdm2ap gpio status during boot
+52731  # kern/d2     - msm: mdm_common: Add check for the mdm_ready flag

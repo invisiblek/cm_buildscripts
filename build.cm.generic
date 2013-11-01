@@ -1,0 +1,295 @@
+#!/bin/bash
+
+while [ $# -gt 0 ]; do
+    case $1 in
+            -h|--help|help)
+            echo ""
+            echo -e '\E[37;44m'"\033[1mbuild.cm.generic by invisiblek\033[0m"
+            echo -e '\E[37;44m'"\033[1mScript that builds CM with options given\033[0m"
+            echo ""
+            echo -e '\E[37;44m'"\033[1mUsage:\033[0m build.cm.generic <device> <version> [-h] [-u] [-s] [-p] [-c] [-t] [-f] [-o]"
+            echo "  -h|--help      : Show this help message"
+            echo "  -s|--sync      : Sync source"
+            echo "  -p|--pick      : Cherry pick"
+            echo "  -u|--upload    : Upload when finished"
+            echo "  -c|--clobber   : Clobber the build"
+            echo "  -t|--tweet     : Tweet when finished"
+            echo "  -f|--force     : Skip pauses"
+            echo "  -o|--odex      : Build ROM Odexed"
+            echo ""
+            exit 0
+            ;;
+            -s|--sync|sync)
+            sync="true"
+            ;;
+            -o|--odex|odex)
+            odex="true"
+            ;;
+            -p|--pick|pick)
+            cpick="true"
+            ;;
+            -t|--tweet|tweet)
+            tweet="true"
+            ;;
+            -u|--upload|upload)
+            upload="true"
+            ;;
+            -f|--force|force)
+            force="true"
+            ;;
+            -c|--clobber|clobber)
+            clobber="true"
+            ;;
+            10.1|cm-10.1)
+            version=10.1
+            ;;
+            10.2|cm-10.2)
+            version=10.2
+            ;;
+            11|cm-11)
+            version=11
+            ;;
+            *)
+            if [ -n "$devicename" ]
+            then
+                echo -e '\E[37;41m'"\033[1mPlease specify only one device\033[0m"
+                echo -e '\E[37;41m'"\033[1mYou specified $devicename and $1\033[0m"
+                exit 1
+            else
+                devicename=$1
+            fi
+            ;;
+    esac
+    shift
+done
+
+if [ "$version" == "" ]
+then
+  echo -e '\E[37;41m'"\033[1mPlease specify CM version\033[0m"
+  exit 1
+fi
+
+if [ "$upload" != "true" ]
+then
+    tweet="false"
+fi
+
+# Set some variables for use later
+  sourcedir=$HOME/cm/$version
+  tempdir=$HOME/cm/tempdir
+  export USE_CCACHE=1
+
+# Set device model number
+# This is done because my webserver's directories are all fucked up
+  case "$devicename" in
+
+    "toro")
+    modelno="toro"
+    ;;
+
+    "dlx")
+    modelno="dlx"
+    ;;
+
+    "tenderloin")
+    modelno="tenderloin"
+    ;;
+
+    "ouya_1_1")
+    modelno="ouya"
+    ;;
+
+    "d2vzw")
+    modelno="sch-i535"
+    ;;
+
+    "d2usc")
+    modelno="sch-r530u"
+    ;;
+
+    "d2mtr")
+    modelno="sch-r530m"
+    ;;
+
+    "d2cri")
+    modelno="sch-r530c"
+    ;;
+
+    "d2spr")
+    modelno="sph-i710"
+    ;;
+
+    "d2tmo")
+    modelno="sgh-t999"
+    ;;
+
+    "d2att")
+    modelno="sgh-i747"
+    ;;
+
+    "jfltevzw")
+    modelno="sch-i545"
+    ;;
+
+    "jfltespr")
+    modelno="sph-l720"
+    ;;
+
+    "jfltexx")
+    modelno="gt-i9505"
+    ;;
+
+    * )
+    echo -e '\E[37;44m'"\033[1mI'm sorry, $devicename is not a supported device.\033[0m"
+    exit 1
+    ;;
+
+esac
+
+# Let user know what we are going to do
+
+  echo -e '\E[37;44m'"\033[1mBuilding CM$version for $devicename\033[0m"
+  if [ "$odex" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mBuilding ROM Odexed\033[0m"
+    export WITH_DEXPREOPT=true
+  else
+    echo -e '\E[37;44m'"\033[1mBuilding ROM deOdexed\033[0m"
+  fi
+  if [ "$clobber" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mWill clobber the build\033[0m"
+  else
+    echo -e '\E[37;44m'"\033[1mWill not clobber the build\033[0m"
+  fi
+  if [ "$sync" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mWill sync CM$version source first\033[0m"
+  else
+    echo -e '\E[37;44m'"\033[1mWill skip syncing CM$version source code\033[0m"
+  fi
+  if [ "$cpick" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mWill pull in cherry picks\033[0m"
+  else
+    echo -e '\E[37;44m'"\033[1mWill skip cherry picks\033[0m"
+  fi
+  if [ "$upload" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mWill upload when finished\033[0m"
+  else
+    echo -e '\E[37;44m'"\033[1mWill not upload when finished\033[0m"
+  fi
+  if [ "$tweet" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mWill tweet when finished\033[0m"
+  else
+    echo -e '\E[37;44m'"\033[1mWill not tweet when finished\033[0m"
+  fi
+  if [ "$force" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mContinuing build...\033[0m"
+  else
+    read -p "Press [enter] to continue..."
+    echo -e '\E[37;44m'"\033[1mContinuing build!\033[0m"
+    sleep 1
+  fi
+
+# Clean up a bit
+  rm -rf $tempdir
+  mkdir $tempdir
+
+# Sync if told to
+  if [ "$sync" == "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mSyncing...\033[0m"
+    cd $sourcedir/
+    source build/envsetup.sh
+    $HOME/.bin/repo sync -j16 > /dev/null
+  else
+    echo -e '\E[37;44m'"\033[1mSkipping sync...\033[0m"
+  fi
+
+# Cherry pick if told to
+  set -e
+  if [ "$cpick" = "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mCleaning Repos...\033[0m"
+    cd $sourcedir/
+    set +e
+    repo forall -c 'pwd && git reset && git reset github/cm-$version && git checkout . && git clean -fd'
+    echo -e '\E[37;44m'"\033[1mCherry picking...\033[0m"
+    while read line; do
+      p=`echo $line | awk '{print $1}'`
+      repopick $p
+    done < $HOME/.bin/build.cm-$version.cherrypicks
+    echo -e '\E[37;44m'"\033[1mRunning hax...\033[0m"
+    $HOME/.bin/build.cm.hax $version
+    set -e
+  fi
+  set +e
+
+  echo -e '\E[37;44m'"\033[1mGrabbing prebuilts...\033[0m"
+  vendor/cm/get-prebuilts > /dev/null
+
+# Build!
+  cd $sourcedir/
+  if [ "$clobber" == "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mClobbering...\033[0m"
+    make clobber
+  else
+    set +e
+    echo -e '\E[37;44m'"\033[1mDoing a bit of cleanup...\033[0m"
+    rm $sourcedir/out/target/product/$devicename/cm-$version-*.zip > /dev/null
+    rm $sourcedir/out/target/product/$devicename/cm-$version-*.zip.md5sum > /dev/null
+    rm $sourcedir/out/target/product/$devicename/system/build.prop > /dev/null
+    set -e
+  fi
+
+  echo -e '\E[37;44m'"\033[1mStarting build...\033[0m"
+  /usr/bin/time -o $tempdir/seconds -f "%E" bash -c ". build/envsetup.sh && brunch $devicename"
+
+# Set filename and chmod
+  set -e
+  cd $sourcedir/out/target/product/$devicename/
+  filename=`ls cm-*.zip`
+  chmod 644 $filename
+
+# Upload
+  if [ "$upload" == "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mUploading...\033[0m"
+    scp $sourcedir/out/target/product/$devicename/$filename invisib5@invisiblek.org:public_html/$modelno/roms/cm$version/$filename
+  else
+    echo -e '\E[37;44m'"\033[1mSkipping upload...\033[0m"
+  fi
+
+# Shorten URL
+  if [ "$upload" == "true" ]
+  then
+    echo -e '\E[37;44m'"\033[1mMaking a short URL...\033[0m"
+    url="http://invisiblek.org/$modelno/roms/cm$version/$filename"
+    shorturl=`$HOME/.bin/bitly.py $url`
+
+    # Tweet
+    if [ "$tweet" == "true" ]
+    then
+    echo -e '\E[37;44m'"\033[1mTweeting...\033[0m"
+      $HOME/.bin/tweepy "New unofficial cm$version $devicename is available! Download here: $shorturl"
+    fi
+
+  else
+    shorturl="<not uploaded>"
+  fi
+
+# Spit out an email
+  echo -e '\E[37;44m'"\033[1mSpitting out an email...\033[0m"
+  elapsed=`cat $tempdir/seconds |  sed 's/:\([^:]\+\)$/m\1/;s/:/h/;s/\..\...*//;s/$/s/'`
+  $HOME/.bin/email "build@invisiblek.org" "dan.pasanen+roms@gmail.com" "New $devicename CM$version Build" "Download: $shorturl\nBuild Time: $elapsed" "invisiblek.org" "build@invisiblek.org"
+
+echo -e '\E[37;44m'"\033[1mBuild Time: $elapsed\033[0m"
+
+rm -rf $tempdir
+
+exit 0

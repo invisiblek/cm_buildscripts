@@ -1,0 +1,35 @@
+These are just some base scripts that I use for building automated cm builds and uploading them. Feel free to use them, I'm putting them up here for revision control.
+
+This assumes:
+- a fully working build machine
+- repos are in ~/cm/ and named based on the version (ex: ~/cm/10.2)
+- probably some other shit that i am overlooking
+
+This makes use of several scripts and programs by other people.
+- tweepy - https://github.com/tweepy/tweepy
+- bitly.py - https://code.google.com/p/python-bitly/
+
+Description of the various scripts:
+- build.cm.sh
+  - this is the main script that is called to begin builds
+  - specify the version of cm you'd like to build for
+  - inside it, devices are specified to build (ie 10.1, 10.2, 11)
+  - there are two arrays for each pub/personal build in order to control the order in which they are built
+  - see comments for more information
+- build.cm.generic
+  - for lots of useful information, try: ./build.cm.generic -h
+  - you'll want to modify a few lines if you plan to use this
+    - lines regarding uploading to a public site, determining a bit.ly address, tweeting and sending an email
+    - if you don't pass the upload (-u, --upload, upload) parameter, then you'll only need to update/remove the email command
+    - $devicename to $modelno associations
+- build.cm-<version>.cherrypicks (modify <version> for cm version, ex: 10.2 <-- generic-izing this is on the fix list but low priority)
+  - see file for information
+  - repopick will be run agains the first 'word' on each line
+  - stick the word 'skip' at the beginning of one that you may want to skip
+  - shorthand repo and description are unecessary and only there for removing later
+  - repopick is smart enough to know not to try to pick merged commits
+- build.cm.hax
+  - last minute hax to the source tree that you may need to run
+  - cm version is passed to this and it runs regular shell scripts right before the build takes place
+
+There's probably a lot I'm missing here, but its a good start to some scripts that seem to work pretty good for me

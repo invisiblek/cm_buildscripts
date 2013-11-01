@@ -1,0 +1,23 @@
+#!/bin/bash
+
+case $1 in
+	10.1|cm10.1|cm-10.1)
+	;;
+	10.2|cm10.2|cm-10.2)
+		pwd=`pwd`
+
+		#cd kernel/samsung/jf
+		#git fetch http://review.cyanogenmod.org/CyanogenMod/android_kernel_samsung_d2 refs/changes/30/52730/1 && git cherry-pick FETCH_HEAD
+		#git fetch http://review.cyanogenmod.org/CyanogenMod/android_kernel_samsung_d2 refs/changes/31/52731/1 && git cherry-pick FETCH_HEAD
+
+		cd $pwd
+	;;
+	11|cm11|cm-11)
+	;;
+	*)
+		echo "build.cm.hax: Must specify cm version"
+		exit 1
+	;;
+esac
+
+exit 0
