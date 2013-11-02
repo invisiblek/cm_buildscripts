@@ -33,10 +33,10 @@ fi
   do
     if [ "$first" == true ]
     then
-      /home/dp/.bin/build.cm$version.generic -f -p -s -c -u -t $i
+      /home/dp/.bin/build.cm.generic -f -p -s -c -u -t $i $version
       first=false
     else
-      /home/dp/.bin/build.cm$version.generic -f -u -t $i
+      /home/dp/.bin/build.cm.generic -f -u -t $i $version
     fi
   done
 
@@ -45,10 +45,10 @@ fi
   do
     if [ "$first" == true ]
     then
-      /home/dp/.bin/build.cm$version.generic -f -p -s -c $i
+      /home/dp/.bin/build.cm.generic -f -p -s -c $i $version
       first=false
     else
-      /home/dp/.bin/build.cm$version.generic -f $i
+      /home/dp/.bin/build.cm.generic -f $i $version
     fi
   done
 
@@ -57,10 +57,10 @@ fi
   do
     if [ "$first" == true ]
     then
-      /home/dp/.bin/build.cm$version.generic -f -p -s -c -u -t $i
+      /home/dp/.bin/build.cm.generic -f -p -s -c -u -t $i $version
       first=false
     else
-      /home/dp/.bin/build.cm$version.generic -f -u -t $i
+      /home/dp/.bin/build.cm.generic -f -u -t $i $version
     fi
   done
 
@@ -69,9 +69,9 @@ fi
   do
     if [ "$first" == true ]
     then
-      /home/dp/.bin/build.cm$version.generic -f -p -s -c $i
+      /home/dp/.bin/build.cm.generic -f -p -s -c $i $version
       first=false
     else
-      /home/dp/.bin/build.cm$version.generic -f $i
+      /home/dp/.bin/build.cm.generic -f $i $version
     fi
   done
